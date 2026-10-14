@@ -41,4 +41,23 @@ describe('Create account (E2E)', () => {
 
     expect(userOnDatabase).toBeTruthy()
   })
+
+  test('[POST] /accounts with an e-mail already in use', async () => {
+    const response = await request(app.getHttpServer()).post('/accounts').send({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password: '123456',
+    })
+
+    expect(response.statusCode).toBe(409)
+  })
+
+  test('[POST] /accounts with invalid body', async () => {
+    const response = await request(app.getHttpServer()).post('/accounts').send({
+      name: 'John Doe',
+      email: 'invalid-email',
+    })
+
+    expect(response.statusCode).toBe(400)
+  })
 })
