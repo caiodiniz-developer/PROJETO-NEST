@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard.js'
 import type { UserPayload } from '../auth/jwt.strategy.js'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe.js'
 import { PrismaService } from '../prisma/prisma.service.js'
+import { convertToSlug } from '../utils/convert-to-slug.js'
 
 const createQuestionBodySchema = z.object({
   title: z.string(),
@@ -33,21 +34,8 @@ export class CreateQuestionController {
         authorId: userId,
         title,
         content,
-        slug: this.convertToSlug(title),
+        slug: convertToSlug(title),
       },
     })
-  }
-
-  private convertToSlug(title: string): string {
-    return title
-      .normalize('NFKD')
-      .toLowerCase()
-      .replace(/[̀-ͯ]/g, '')
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '')
-      .replace(/_/g, '-')
-      .replace(/--+/g, '-')
-      .replace(/-$/g, '')
   }
 }
