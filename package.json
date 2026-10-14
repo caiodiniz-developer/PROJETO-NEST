@@ -43,6 +43,7 @@
     "@nestjs/mau": "^0.2.6",
     "@nestjs/schematics": "^12.0.0",
     "@rocketseat/eslint-config": "^2.2.2",
+    "@swc/core": "^1.16.18",
     "@types/express": "^5.0.0",
     "@types/node": "^24.0.0",
     "@types/passport-jwt": "^4.0.1",
@@ -52,6 +53,8 @@
     "prettier": "^3.4.2",
     "prisma": "^7.10.0",
     "source-map-support": "^0.5.21",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "unplugin-swc": "^2.0.0",
+    "vitest": "^5.0.4"
   }
 }
