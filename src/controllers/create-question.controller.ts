@@ -33,8 +33,21 @@ export class CreateQuestionController {
         authorId: userId,
         title,
         content,
-        slug: title,
+        slug: this.convertToSlug(title),
       },
     })
+  }
+
+  private convertToSlug(title: string): string {
+    return title
+      .normalize('NFKD')
+      .toLowerCase()
+      .replace(/[̀-ͯ]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/_/g, '-')
+      .replace(/--+/g, '-')
+      .replace(/-$/g, '')
   }
 }
