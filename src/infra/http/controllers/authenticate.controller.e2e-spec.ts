@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { hash } from 'bcryptjs'
 import request from 'supertest'
-import { AppModule } from '../app.module.js'
-import { PrismaService } from '../infra/database/prisma/prisma.service.js'
+import { AppModule } from '../../../app.module.js'
+import { PrismaService } from '../../database/prisma/prisma.service.js'
 
 describe('Authenticate (E2E)', () => {
   let app: INestApplication
