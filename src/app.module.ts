@@ -6,7 +6,7 @@ import { CreateAccountController } from './controllers/create-account.controller
 import { CreateQuestionController } from './controllers/create-question.controller.js'
 import { FetchRecentQuestionsController } from './controllers/fetch-recent-questions.controller.js'
 import { envSchema } from './env.js'
-import { PrismaService } from './prisma/prisma.service.js'
+import { PrismaService } from './infra/database/prisma/prisma.service.js'
 
 @Module({
   imports: [

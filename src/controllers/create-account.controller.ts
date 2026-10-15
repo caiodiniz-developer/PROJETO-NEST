@@ -9,7 +9,7 @@ import {
 import { hash } from 'bcryptjs'
 import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe.js'
-import { PrismaService } from '../prisma/prisma.service.js'
+import { PrismaService } from '../infra/database/prisma/prisma.service.js'
 
 const createAccountBodySchema = z.object({
   name: z.string(),
