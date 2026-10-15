@@ -1,11 +1,10 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { z } from 'zod'
+import { CreateQuestionUseCase } from '../../../domain/forum/application/use-cases/create-question.js'
 import { CurrentUser } from '../../auth/current-user-decorator.js'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard.js'
 import type { UserPayload } from '../../auth/jwt.strategy.js'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe.js'
-import { PrismaService } from '../../database/prisma/prisma.service.js'
-import { convertToSlug } from '../../../utils/convert-to-slug.js'
 
 const createQuestionBodySchema = z.object({
   title: z.string(),
@@ -19,7 +18,7 @@ type CreateQuestionBodySchema = z.infer<typeof createQuestionBodySchema>
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
 export class CreateQuestionController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private createQuestion: CreateQuestionUseCase) {}
 
   @Post()
   async handle(
@@ -29,13 +28,15 @@ export class CreateQuestionController {
     const { title, content } = body
     const userId = user.sub
 
-    await this.prisma.question.create({
-      data: {
-        authorId: userId,
-        title,
-        content,
-        slug: convertToSlug(title),
-      },
+    const result = await this.createQuestion.execute({
+      title,
+      content,
+      authorId: userId,
+      attachmentsIds: [],
     })
+
+    if (result.isLeft()) {
+      throw new BadRequestException()
+    }
   }
 }
