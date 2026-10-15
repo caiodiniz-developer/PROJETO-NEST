@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { FetchRecentQuestionsUseCase } from '../../../domain/forum/application/use-cases/fetch-recent-questions.js'
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard.js'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe.js'
+import { QuestionPresenter } from '../presenters/question-presenter.js'
 
 const pageQueryParamSchema = z
   .string()
@@ -38,6 +39,6 @@ export class FetchRecentQuestionsController {
 
     const questions = result.value.questions
 
-    return { questions }
+    return { questions: questions.map(QuestionPresenter.toHTTP) }
   }
 }
