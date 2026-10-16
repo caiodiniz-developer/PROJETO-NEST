@@ -1,5 +1,6 @@
 @baseUrl = http://localhost:3333
 @authToken = {{authenticate.response.body.access_token}}
+@questionId = {{fetch_recent_questions.response.body.questions[0].id}}
 
 # @name create_account
 POST {{baseUrl}}/accounts
@@ -45,4 +46,22 @@ Authorization: Bearer {{authToken}}
 
 # @name get_question_by_slug
 GET {{baseUrl}}/questions/nova-pergunta
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name edit_question
+PUT {{baseUrl}}/questions/{{questionId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Pergunta editada",
+  "content": "Conteúdo editado"
+}
+
+###
+
+# @name delete_question
+DELETE {{baseUrl}}/questions/{{questionId}}
 Authorization: Bearer {{authToken}}
