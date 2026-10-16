@@ -39,7 +39,9 @@ describe('Register Student', () => {
     const hashedPassword = await fakeHasher.hash('123456')
 
     expect(result.isRight()).toBe(true)
-    expect(inMemoryStudentsRepository.items[0]?.password).toEqual(hashedPassword)
+    expect(inMemoryStudentsRepository.items[0]?.password).toEqual(
+      hashedPassword,
+    )
   })
 
   it('should not be able to register a student with same email twice', async () => {

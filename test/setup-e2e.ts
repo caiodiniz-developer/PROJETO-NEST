@@ -23,7 +23,10 @@ const databaseURL = generateUniqueDatabaseURL(schemaId)
 process.env.DATABASE_URL = databaseURL
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: databaseURL }, { schema: schemaId }),
+  adapter: new PrismaPg(
+    { connectionString: databaseURL },
+    { schema: schemaId },
+  ),
 })
 
 beforeAll(async () => {
