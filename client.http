@@ -1,6 +1,7 @@
 @baseUrl = http://localhost:3333
 @authToken = {{authenticate.response.body.access_token}}
 @questionId = {{fetch_recent_questions.response.body.$.questions[0].id}}
+@answerId = {{fetch_question_answers.response.body.$.answers[0].id}}
 
 # @name create_account
 POST {{baseUrl}}/accounts
@@ -64,4 +65,44 @@ Authorization: Bearer {{authToken}}
 
 # @name delete_question
 DELETE {{baseUrl}}/questions/{{questionId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name answer_question
+POST {{baseUrl}}/questions/{{questionId}}/answers
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "content": "Nova resposta"
+}
+
+###
+
+# @name fetch_question_answers
+GET {{baseUrl}}/questions/{{questionId}}/answers?page=1
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name edit_answer
+PUT {{baseUrl}}/answers/{{answerId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "content": "Resposta editada"
+}
+
+###
+
+# @name choose_question_best_answer
+PATCH {{baseUrl}}/answers/{{answerId}}/choose-as-best
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name delete_answer
+DELETE {{baseUrl}}/answers/{{answerId}}
 Authorization: Bearer {{authToken}}
