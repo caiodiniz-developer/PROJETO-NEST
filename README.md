@@ -12,6 +12,27 @@ npx prisma migrate dev
 npm run start:dev
 ```
 
+## Arquitetura
+
+```
+src/
+  core/            # Either, entidades base, eventos de domínio, erros
+  domain/
+    forum/         # entidades, casos de uso, contratos de repositório e criptografia
+    notification/  # notificações e subscribers
+  infra/
+    auth/          # JWT (RS256), guard global e decorator @Public
+    cryptography/  # bcrypt e JWT implementando os gateways do domínio
+    database/      # Prisma: service, mappers e repositórios
+    env/           # validação e acesso às variáveis de ambiente
+    http/          # controllers, pipes e presenters
+test/              # factories, repositórios in-memory e stubs
+```
+
+O domínio não conhece o Prisma nem o HTTP: os controllers chamam casos de uso,
+que dependem de classes abstratas implementadas na camada de infra.
+Todas as rotas são privadas por padrão; use `@Public()` para liberar.
+
 ## Rotas
 
 | Método | Rota         | Auth | Descrição                    |
