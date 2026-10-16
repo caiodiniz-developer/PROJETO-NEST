@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common'
 import { type Either, right } from '../../../../core/either.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { Answer } from '../../enterprise/entities/answer.js'
 import { AnswerAttachment } from '../../enterprise/entities/answer-attachment.js'
 import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list.js'
-import type { AnswersRepository } from '../repositories/answers-repository.js'
+import { AnswersRepository } from '../repositories/answers-repository.js'
 
 interface AnswerQuestionUseCaseRequest {
   instructorId: string
@@ -19,6 +20,7 @@ type AnswerQuestionUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class AnswerQuestionUseCase {
   constructor(private answersRepository: AnswersRepository) {}
 
