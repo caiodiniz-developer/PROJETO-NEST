@@ -55,7 +55,7 @@ model Answer {
 
   author       User         @relation(fields: [authorId], references: [id])
   bestAnswerOn Question?    @relation("bestAnswer")
-  question     Question     @relation(fields: [questionId], references: [id])
+  question     Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   comments     Comment[]
   attachments  Attachment[]
 
@@ -72,8 +72,8 @@ model Comment {
   answerId   String?   @map("answer_id")
 
   author   User      @relation(fields: [authorId], references: [id])
-  question Question? @relation(fields: [questionId], references: [id])
-  answer   Answer?   @relation(fields: [answerId], references: [id])
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer   Answer?   @relation(fields: [answerId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
