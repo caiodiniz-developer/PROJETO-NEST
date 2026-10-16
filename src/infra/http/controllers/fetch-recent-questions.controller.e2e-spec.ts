@@ -1,86 +1,86 @@
-import { INestApplication } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Test } from "@nestjs/testing";
-import request from "supertest";
-import { AppModule } from "../../app.module.js";
-import { PrismaService } from "../../database/prisma/prisma.service.js";
+import { INestApplication } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { Test } from '@nestjs/testing'
+import request from 'supertest'
+import { AppModule } from '../../app.module.js'
+import { PrismaService } from '../../database/prisma/prisma.service.js'
 
-describe("Fetch recent questions (E2E)", () => {
-  let app: INestApplication;
-  let prisma: PrismaService;
-  let jwt: JwtService;
+describe('Fetch recent questions (E2E)', () => {
+  let app: INestApplication
+  let prisma: PrismaService
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
 
-    prisma = moduleRef.get(PrismaService);
-    jwt = moduleRef.get(JwtService);
+    prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
-    await app.init();
-  });
+    await app.init()
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
-  test("[GET] /questions", async () => {
+  test('[GET] /questions', async () => {
     const user = await prisma.user.create({
       data: {
-        name: "John Doe",
-        email: "johndoe@example.com",
-        password: "123456",
+        name: 'John Doe',
+        email: 'johndoe@example.com',
+        password: '123456',
       },
-    });
+    })
 
-    const accessToken = jwt.sign({ sub: user.id });
+    const accessToken = jwt.sign({ sub: user.id })
 
     await prisma.question.createMany({
       data: [
         {
-          title: "Question 01",
-          slug: "question-01",
-          content: "Question content",
+          title: 'Question 01',
+          slug: 'question-01',
+          content: 'Question content',
           authorId: user.id,
         },
         {
-          title: "Question 02",
-          slug: "question-02",
-          content: "Question content",
+          title: 'Question 02',
+          slug: 'question-02',
+          content: 'Question content',
           authorId: user.id,
         },
       ],
-    });
+    })
 
     const response = await request(app.getHttpServer())
-      .get("/questions")
-      .set("Authorization", `Bearer ${accessToken}`)
-      .send();
+      .get('/questions')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send()
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(200)
     expect(response.body).toEqual({
       questions: expect.arrayContaining([
-        expect.objectContaining({ title: "Question 01" }),
-        expect.objectContaining({ title: "Question 02" }),
+        expect.objectContaining({ title: 'Question 01' }),
+        expect.objectContaining({ title: 'Question 02' }),
       ]),
-    });
-  });
+    })
+  })
 
-  test("[GET] /questions with invalid page", async () => {
+  test('[GET] /questions with invalid page', async () => {
     const user = await prisma.user.findUniqueOrThrow({
-      where: { email: "johndoe@example.com" },
-    });
+      where: { email: 'johndoe@example.com' },
+    })
 
-    const accessToken = jwt.sign({ sub: user.id });
+    const accessToken = jwt.sign({ sub: user.id })
 
     const response = await request(app.getHttpServer())
-      .get("/questions?page=0")
-      .set("Authorization", `Bearer ${accessToken}`)
-      .send();
+      .get('/questions?page=0')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send()
 
-    expect(response.statusCode).toBe(400);
-  });
-});
+    expect(response.statusCode).toBe(400)
+  })
+})

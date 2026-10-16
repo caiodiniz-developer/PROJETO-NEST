@@ -6,23 +6,23 @@ import {
   HttpCode,
   Post,
   UsePipes,
-} from "@nestjs/common";
-import { z } from "zod";
-import { StudentAlreadyExistsError } from "../../../domain/forum/application/use-cases/errors/student-already-exists-error.js";
-import { RegisterStudentUseCase } from "../../../domain/forum/application/use-cases/register-student.js";
-import { Public } from "../../auth/public.js";
-import { ZodValidationPipe } from "../pipes/zod-validation-pipe.js";
+} from '@nestjs/common'
+import { z } from 'zod'
+import { StudentAlreadyExistsError } from '../../../domain/forum/application/use-cases/errors/student-already-exists-error.js'
+import { RegisterStudentUseCase } from '../../../domain/forum/application/use-cases/register-student.js'
+import { Public } from '../../auth/public.js'
+import { ZodValidationPipe } from '../pipes/zod-validation-pipe.js'
 
 const createAccountBodySchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string(),
-});
+})
 
-type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>;
+type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 
 @Public()
-@Controller("/accounts")
+@Controller('/accounts')
 export class CreateAccountController {
   constructor(private registerStudent: RegisterStudentUseCase) {}
 
@@ -30,22 +30,22 @@ export class CreateAccountController {
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(createAccountBodySchema))
   async handle(@Body() body: CreateAccountBodySchema) {
-    const { name, email, password } = body;
+    const { name, email, password } = body
 
     const result = await this.registerStudent.execute({
       name,
       email,
       password,
-    });
+    })
 
     if (result.isLeft()) {
-      const error = result.value;
+      const error = result.value
 
       switch (error.constructor) {
         case StudentAlreadyExistsError:
-          throw new ConflictException(error.message);
+          throw new ConflictException(error.message)
         default:
-          throw new BadRequestException(error.message);
+          throw new BadRequestException(error.message)
       }
     }
   }
