@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3333
 @authToken = {{authenticate.response.body.access_token}}
-@questionId = {{fetch_recent_questions.response.body.questions[0].id}}
+@questionId = {{fetch_recent_questions.response.body.$.questions[0].id}}
 
 # @name create_account
 POST {{baseUrl}}/accounts
