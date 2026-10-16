@@ -106,3 +106,49 @@ Authorization: Bearer {{authToken}}
 # @name delete_answer
 DELETE {{baseUrl}}/answers/{{answerId}}
 Authorization: Bearer {{authToken}}
+
+###
+
+# @name comment_on_question
+POST {{baseUrl}}/questions/{{questionId}}/comments
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "content": "Novo comentário na pergunta"
+}
+
+###
+
+# @name fetch_question_comments
+GET {{baseUrl}}/questions/{{questionId}}/comments?page=1
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name delete_question_comment
+DELETE {{baseUrl}}/questions/comments/{{fetch_question_comments.response.body.$.comments[0].id}}
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name comment_on_answer
+POST {{baseUrl}}/answers/{{answerId}}/comments
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "content": "Novo comentário na resposta"
+}
+
+###
+
+# @name fetch_answer_comments
+GET {{baseUrl}}/answers/{{answerId}}/comments?page=1
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name delete_answer_comment
+DELETE {{baseUrl}}/answers/comments/{{fetch_answer_comments.response.body.$.comments[0].id}}
+Authorization: Bearer {{authToken}}
