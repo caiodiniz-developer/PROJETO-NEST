@@ -16,6 +16,6 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals", "multer"]
   }
 }
