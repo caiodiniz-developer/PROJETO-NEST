@@ -1,3 +1,5 @@
+import { InMemoryStudentsRepository } from '../../../../../test/repositories/in-memory-students-repository.js'
+import { InMemoryAttachmentsRepository } from '../../../../../test/repositories/in-memory-attachments-repository.js'
 import { makeAnswer } from '../../../../../test/factories/make-answer.js'
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { InMemoryAnswerAttachmentsRepository } from '../../../../../test/repositories/in-memory-answer-attachments-repository.js'
@@ -8,6 +10,8 @@ import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { NotAllowedError } from '../../../../core/errors/errors/not-allowed-error.js'
 import { ChooseQuestionBestAnswerUseCase } from './choose-question-best-answer.js'
 
+let inMemoryStudentsRepository: InMemoryStudentsRepository
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
@@ -16,10 +20,14 @@ let sut: ChooseQuestionBestAnswerUseCase
 
 describe('Choose Question Best Answer', () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository()
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository()
     inMemoryQuestionAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository()
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository,
+      inMemoryAttachmentsRepository,
+      inMemoryStudentsRepository,
     )
     inMemoryAnswerAttachmentsRepository =
       new InMemoryAnswerAttachmentsRepository()
