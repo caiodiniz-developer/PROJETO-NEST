@@ -5,6 +5,7 @@ import { FetchRecentQuestionsUseCase } from '../../domain/forum/application/use-
 import { RegisterStudentUseCase } from '../../domain/forum/application/use-cases/register-student.js'
 import { CryptographyModule } from '../cryptography/cryptography.module.js'
 import { DatabaseModule } from '../database/database.module.js'
+import { StorageModule } from '../storage/storage.module.js'
 import { AuthenticateController } from './controllers/authenticate.controller.js'
 import { CreateAccountController } from './controllers/create-account.controller.js'
 import { CreateQuestionController } from './controllers/create-question.controller.js'
@@ -40,7 +41,7 @@ import { FetchAnswerCommentsController } from './controllers/fetch-answer-commen
 import { UploadAttachmentController } from './controllers/upload-attachment.controller.js'
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, StorageModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
