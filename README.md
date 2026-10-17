@@ -5,7 +5,7 @@ API em NestJS com Prisma, PostgreSQL e autenticação JWT (RS256).
 ## Rodando o projeto
 
 ```bash
-cp .env.example .env        # preencha as chaves JWT
+cp .env.example .env        # preencha as chaves JWT e as credenciais do R2
 docker compose up -d
 npm install
 npx prisma migrate dev
@@ -25,6 +25,7 @@ src/
     cryptography/  # bcrypt e JWT implementando os gateways do domínio
     database/      # Prisma: service, mappers e repositórios
     env/           # validação e acesso às variáveis de ambiente
+    storage/       # upload de arquivos no Cloudflare R2
     http/          # controllers, pipes e presenters
 test/              # factories, repositórios in-memory e stubs
 ```
@@ -35,26 +36,27 @@ Todas as rotas são privadas por padrão; use `@Public()` para liberar.
 
 ## Rotas
 
-| Método | Rota                                | Auth | Descrição                            |
-| ------ | ----------------------------------- | ---- | ------------------------------------ |
-| POST   | `/accounts`                         | não  | Cria uma conta                       |
-| POST   | `/sessions`                         | não  | Autentica e retorna o token          |
-| POST   | `/questions`                        | sim  | Cria uma pergunta                    |
-| GET    | `/questions`                        | sim  | Lista perguntas recentes (`?page=1`) |
-| GET    | `/questions/:slug`                  | sim  | Busca pergunta pelo slug             |
-| PUT    | `/questions/:id`                    | sim  | Edita uma pergunta                   |
-| DELETE | `/questions/:id`                    | sim  | Deleta uma pergunta                  |
-| POST   | `/questions/:questionId/answers`    | sim  | Responde uma pergunta                |
-| GET    | `/questions/:questionId/answers`    | sim  | Lista respostas (`?page=1`)          |
-| PUT    | `/answers/:id`                      | sim  | Edita uma resposta                   |
-| DELETE | `/answers/:id`                      | sim  | Deleta uma resposta                  |
-| PATCH  | `/answers/:answerId/choose-as-best` | sim  | Escolhe a melhor resposta            |
-| POST   | `/questions/:questionId/comments`   | sim  | Comenta uma pergunta                 |
-| GET    | `/questions/:questionId/comments`   | sim  | Lista comentários da pergunta        |
-| DELETE | `/questions/comments/:id`           | sim  | Deleta comentário da pergunta        |
-| POST   | `/answers/:answerId/comments`       | sim  | Comenta uma resposta                 |
-| GET    | `/answers/:answerId/comments`       | sim  | Lista comentários da resposta        |
-| DELETE | `/answers/comments/:id`             | sim  | Deleta comentário da resposta        |
+| Método | Rota                                | Auth | Descrição                               |
+| ------ | ----------------------------------- | ---- | --------------------------------------- |
+| POST   | `/accounts`                         | não  | Cria uma conta                          |
+| POST   | `/sessions`                         | não  | Autentica e retorna o token             |
+| POST   | `/questions`                        | sim  | Cria uma pergunta                       |
+| GET    | `/questions`                        | sim  | Lista perguntas recentes (`?page=1`)    |
+| GET    | `/questions/:slug`                  | sim  | Busca pergunta pelo slug                |
+| PUT    | `/questions/:id`                    | sim  | Edita uma pergunta                      |
+| DELETE | `/questions/:id`                    | sim  | Deleta uma pergunta                     |
+| POST   | `/questions/:questionId/answers`    | sim  | Responde uma pergunta                   |
+| GET    | `/questions/:questionId/answers`    | sim  | Lista respostas (`?page=1`)             |
+| PUT    | `/answers/:id`                      | sim  | Edita uma resposta                      |
+| DELETE | `/answers/:id`                      | sim  | Deleta uma resposta                     |
+| PATCH  | `/answers/:answerId/choose-as-best` | sim  | Escolhe a melhor resposta               |
+| POST   | `/questions/:questionId/comments`   | sim  | Comenta uma pergunta                    |
+| GET    | `/questions/:questionId/comments`   | sim  | Lista comentários da pergunta           |
+| DELETE | `/questions/comments/:id`           | sim  | Deleta comentário da pergunta           |
+| POST   | `/answers/:answerId/comments`       | sim  | Comenta uma resposta                    |
+| GET    | `/answers/:answerId/comments`       | sim  | Lista comentários da resposta           |
+| DELETE | `/answers/comments/:id`             | sim  | Deleta comentário da resposta           |
+| POST   | `/attachments`                      | sim  | Upload de anexo (png, jpg, pdf até 2mb) |
 
 Use o arquivo `client.http` com a extensão Rest Client para testar as rotas.
 
