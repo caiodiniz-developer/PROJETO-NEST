@@ -152,3 +152,17 @@ Authorization: Bearer {{authToken}}
 # @name delete_answer_comment
 DELETE {{baseUrl}}/answers/comments/{{fetch_answer_comments.response.body.$.comments[0].id}}
 Authorization: Bearer {{authToken}}
+
+###
+
+# @name upload_attachment
+POST {{baseUrl}}/attachments
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="sample-upload.png"
+Content-Type: image/png
+
+< ./test/e2e/sample-upload.png
+------Boundary--
