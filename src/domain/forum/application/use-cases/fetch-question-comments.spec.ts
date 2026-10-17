@@ -1,15 +1,18 @@
+import { InMemoryStudentsRepository } from '../../../../../test/repositories/in-memory-students-repository.js'
 import { makeQuestionComment } from '../../../../../test/factories/make-question-comment.js'
 import { InMemoryQuestionCommentsRepository } from '../../../../../test/repositories/in-memory-question-comments-repository.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { FetchQuestionCommentsUseCase } from './fetch-question-comments.js'
 
+let inMemoryStudentsRepository: InMemoryStudentsRepository
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 let sut: FetchQuestionCommentsUseCase
 
 describe('Fetch Question Comments', () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository()
     inMemoryQuestionCommentsRepository =
-      new InMemoryQuestionCommentsRepository()
+      new InMemoryQuestionCommentsRepository((, inMemoryStudentsRepository))
     sut = new FetchQuestionCommentsUseCase(inMemoryQuestionCommentsRepository)
   })
 

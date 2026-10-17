@@ -1,3 +1,4 @@
+import { InMemoryStudentsRepository } from '../../../../../test/repositories/in-memory-students-repository.js'
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { InMemoryQuestionCommentsRepository } from '../../../../../test/repositories/in-memory-question-comments-repository.js'
 import { InMemoryQuestionAttachmentsRepository } from '../../../../../test/repositories/in-memory-question-attachments-repository.js'
@@ -5,6 +6,7 @@ import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in
 import { ResourceNotFoundError } from '../../../../core/errors/errors/resource-not-found-error.js'
 import { CommentOnQuestionUseCase } from './comment-on-question.js'
 
+let inMemoryStudentsRepository: InMemoryStudentsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
@@ -12,13 +14,14 @@ let sut: CommentOnQuestionUseCase
 
 describe('Comment on Question', () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository()
     inMemoryQuestionAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository()
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository,
     )
     inMemoryQuestionCommentsRepository =
-      new InMemoryQuestionCommentsRepository()
+      new InMemoryQuestionCommentsRepository((, inMemoryStudentsRepository))
     sut = new CommentOnQuestionUseCase(
       inMemoryQuestionsRepository,
       inMemoryQuestionCommentsRepository,
