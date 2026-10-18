@@ -26,6 +26,8 @@ src/
     database/      # Prisma: service, mappers e repositórios
     env/           # validação e acesso às variáveis de ambiente
     storage/       # upload de arquivos no Cloudflare R2
+    events/        # registro dos subscribers de eventos de domínio
+    cache/         # cache com Redis (detalhes da pergunta)
     http/          # controllers, pipes e presenters
 test/              # factories, repositórios in-memory e stubs
 ```
@@ -36,27 +38,28 @@ Todas as rotas são privadas por padrão; use `@Public()` para liberar.
 
 ## Rotas
 
-| Método | Rota                                | Auth | Descrição                               |
-| ------ | ----------------------------------- | ---- | --------------------------------------- |
-| POST   | `/accounts`                         | não  | Cria uma conta                          |
-| POST   | `/sessions`                         | não  | Autentica e retorna o token             |
-| POST   | `/questions`                        | sim  | Cria uma pergunta                       |
-| GET    | `/questions`                        | sim  | Lista perguntas recentes (`?page=1`)    |
-| GET    | `/questions/:slug`                  | sim  | Busca pergunta pelo slug                |
-| PUT    | `/questions/:id`                    | sim  | Edita uma pergunta                      |
-| DELETE | `/questions/:id`                    | sim  | Deleta uma pergunta                     |
-| POST   | `/questions/:questionId/answers`    | sim  | Responde uma pergunta                   |
-| GET    | `/questions/:questionId/answers`    | sim  | Lista respostas (`?page=1`)             |
-| PUT    | `/answers/:id`                      | sim  | Edita uma resposta                      |
-| DELETE | `/answers/:id`                      | sim  | Deleta uma resposta                     |
-| PATCH  | `/answers/:answerId/choose-as-best` | sim  | Escolhe a melhor resposta               |
-| POST   | `/questions/:questionId/comments`   | sim  | Comenta uma pergunta                    |
-| GET    | `/questions/:questionId/comments`   | sim  | Lista comentários da pergunta           |
-| DELETE | `/questions/comments/:id`           | sim  | Deleta comentário da pergunta           |
-| POST   | `/answers/:answerId/comments`       | sim  | Comenta uma resposta                    |
-| GET    | `/answers/:answerId/comments`       | sim  | Lista comentários da resposta           |
-| DELETE | `/answers/comments/:id`             | sim  | Deleta comentário da resposta           |
-| POST   | `/attachments`                      | sim  | Upload de anexo (png, jpg, pdf até 2mb) |
+| Método | Rota                                  | Auth | Descrição                               |
+| ------ | ------------------------------------- | ---- | --------------------------------------- |
+| POST   | `/accounts`                           | não  | Cria uma conta                          |
+| POST   | `/sessions`                           | não  | Autentica e retorna o token             |
+| POST   | `/questions`                          | sim  | Cria uma pergunta                       |
+| GET    | `/questions`                          | sim  | Lista perguntas recentes (`?page=1`)    |
+| GET    | `/questions/:slug`                    | sim  | Busca pergunta pelo slug                |
+| PUT    | `/questions/:id`                      | sim  | Edita uma pergunta                      |
+| DELETE | `/questions/:id`                      | sim  | Deleta uma pergunta                     |
+| POST   | `/questions/:questionId/answers`      | sim  | Responde uma pergunta                   |
+| GET    | `/questions/:questionId/answers`      | sim  | Lista respostas (`?page=1`)             |
+| PUT    | `/answers/:id`                        | sim  | Edita uma resposta                      |
+| DELETE | `/answers/:id`                        | sim  | Deleta uma resposta                     |
+| PATCH  | `/answers/:answerId/choose-as-best`   | sim  | Escolhe a melhor resposta               |
+| POST   | `/questions/:questionId/comments`     | sim  | Comenta uma pergunta                    |
+| GET    | `/questions/:questionId/comments`     | sim  | Lista comentários da pergunta           |
+| DELETE | `/questions/comments/:id`             | sim  | Deleta comentário da pergunta           |
+| POST   | `/answers/:answerId/comments`         | sim  | Comenta uma resposta                    |
+| GET    | `/answers/:answerId/comments`         | sim  | Lista comentários da resposta           |
+| DELETE | `/answers/comments/:id`               | sim  | Deleta comentário da resposta           |
+| POST   | `/attachments`                        | sim  | Upload de anexo (png, jpg, pdf até 2mb) |
+| PATCH  | `/notifications/:notificationId/read` | sim  | Marca notificação como lida             |
 
 Use o arquivo `client.http` com a extensão Rest Client para testar as rotas.
 
@@ -68,3 +71,5 @@ npm run test:e2e   # e2e (precisa do postgres rodando)
 ```
 
 Cada arquivo de teste e2e roda em um schema isolado do banco, criado e removido automaticamente.
+Antes da suíte e2e o Redis é limpo uma vez, e os eventos de domínio ficam desligados
+(`DomainEvents.shouldRun = false`), exceto nos testes de eventos.
