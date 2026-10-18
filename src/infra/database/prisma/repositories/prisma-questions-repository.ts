@@ -109,6 +109,15 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
   async save(question: Question): Promise<void> {
     const data = PrismaQuestionMapper.toPrisma(question)
 
+    const currentQuestion = await this.prisma.question.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        slug: true,
+      },
+    })
+
     await Promise.all([
       this.prisma.question.update({
         where: {
@@ -122,16 +131,23 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
       this.questionAttachmentsRepository.deleteMany(
         question.attachments.getRemovedItems(),
       ),
+      this.cache.delete(`question:${data.slug}:details`),
+      currentQuestion && currentQuestion.slug !== data.slug
+        ? this.cache.delete(`question:${currentQuestion.slug}:details`)
+        : undefined,
     ])
 
     DomainEvents.dispatchEventsForAggregate(question.id)
   }
 
   async delete(question: Question): Promise<void> {
-    await this.prisma.question.delete({
-      where: {
-        id: question.id.toString(),
-      },
-    })
+    await Promise.all([
+      this.prisma.question.delete({
+        where: {
+          id: question.id.toString(),
+        },
+      }),
+      this.cache.delete(`question:${question.slug.value}:details`),
+    ])
   }
 }
