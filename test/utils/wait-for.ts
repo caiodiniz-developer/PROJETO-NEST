@@ -4,21 +4,27 @@
  *
  * If the maximum duration is reached, it then rejects.
  *
- * @param assertions {() => void}
+ * @param assertions {() => void | Promise<void>}
  * @param maxDuration {number}
  */
 export async function waitFor(
-  assertions: () => void,
+  assertions: () => void | Promise<void>,
   maxDuration = 1000,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let elapsedTime = 0
+    let running = false
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
+      if (running) {
+        return
+      }
+
+      running = true
       elapsedTime += 10
 
       try {
-        assertions()
+        await assertions()
         clearInterval(interval)
         resolve()
       } catch (err) {
@@ -26,6 +32,8 @@ export async function waitFor(
           clearInterval(interval)
           reject(err)
         }
+      } finally {
+        running = false
       }
     }, 10)
   })
