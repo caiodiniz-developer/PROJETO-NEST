@@ -166,3 +166,9 @@ Content-Type: image/png
 
 < ./test/e2e/sample-upload.png
 ------Boundary--
+
+###
+
+# @name read_notification
+PATCH {{baseUrl}}/notifications/{{notificationId}}/read
+Authorization: Bearer {{authToken}}
