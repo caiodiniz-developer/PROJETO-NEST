@@ -4,6 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { execSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { PrismaClient } from '../src/generated/prisma/client.js'
+import { DomainEvents } from '../src/core/events/domain-events.js'
 
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -21,6 +22,8 @@ const schemaId = randomUUID()
 const databaseURL = generateUniqueDatabaseURL(schemaId)
 
 process.env.DATABASE_URL = databaseURL
+
+DomainEvents.shouldRun = false
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg(
