@@ -2,6 +2,7 @@
 @authToken = {{authenticate.response.body.access_token}}
 @questionId = {{fetch_recent_questions.response.body.$.questions[0].id}}
 @answerId = {{fetch_question_answers.response.body.$.answers[0].id}}
+@notificationId = <id-da-notificacao>
 
 # @name create_account
 POST {{baseUrl}}/accounts
