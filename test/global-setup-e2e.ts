@@ -10,6 +10,8 @@ export async function setup() {
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
     db: env.REDIS_DB,
+    maxRetriesPerRequest: 1,
+    retryStrategy: () => null,
   })
 
   await redis.flushdb()
