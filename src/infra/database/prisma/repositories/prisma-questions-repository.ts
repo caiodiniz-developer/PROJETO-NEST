@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { DomainEvents } from '../../../../core/events/domain-events.js'
 import type { PaginationParams } from '../../../../core/repositories/pagination-params.js'
+import { CacheRepository } from '../../../cache/cache-repository.js'
 import { QuestionAttachmentsRepository } from '../../../../domain/forum/application/repositories/question-attachments-repository.js'
 import { QuestionsRepository } from '../../../../domain/forum/application/repositories/questions-repository.js'
 import type { Question } from '../../../../domain/forum/enterprise/entities/question.js'
@@ -13,6 +14,7 @@ import { PrismaService } from '../prisma.service.js'
 export class PrismaQuestionsRepository implements QuestionsRepository {
   constructor(
     private prisma: PrismaService,
+    private cache: CacheRepository,
     private questionAttachmentsRepository: QuestionAttachmentsRepository,
   ) {}
 
@@ -45,6 +47,20 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
   }
 
   async findDetailsBySlug(slug: string): Promise<QuestionDetails | null> {
+    const cacheHit = await this.cache.get(`question:${slug}:details`)
+
+    if (cacheHit) {
+      const cachedData = JSON.parse(cacheHit, (key, value) => {
+        if ((key === 'createdAt' || key === 'updatedAt') && value) {
+          return new Date(value)
+        }
+
+        return value
+      })
+
+      return PrismaQuestionDetailsMapper.toDomain(cachedData)
+    }
+
     const question = await this.prisma.question.findUnique({
       where: {
         slug,
@@ -58,6 +74,8 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     if (!question) {
       return null
     }
+
+    await this.cache.set(`question:${slug}:details`, JSON.stringify(question))
 
     return PrismaQuestionDetailsMapper.toDomain(question)
   }
